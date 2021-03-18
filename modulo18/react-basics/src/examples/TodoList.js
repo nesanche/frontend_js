@@ -1,19 +1,34 @@
 import React, { useState } from "react"
+import check from "../img/check.svg"
+import checked from "../img/checked.svg"
 
 const TodoList = () => {
-  const [todos, setTodos] = useState([])
+  const [todos, setTodos] = useState([ { id: 123, checked: false, title: 'Estudiar Javascript' } ])
   const [todoValue, setTodoValue] = useState('')
 
   const addTodo = (e) => {
     e.preventDefault()
-    setTodos((prevState) => [...prevState, todoValue])
+    const newTodo = { title: todoValue, checked: false, id: Math.floor(Math.random() * 100) + 1 };
+    setTodos((prevState) => [...prevState, newTodo])
     setTodoValue('')
   }
 
-  const removeTodo = (todoToRemove) => {
-    console.log(todoToRemove)
-    console.log("Se clickeo")
-    const newTodos = todos.filter( (todo) => todo !== todoToRemove)
+  const removeTodo = (todoId) => {
+    const newTodos = todos.filter( (todo) => todo.id !== todoId)
+    setTodos(newTodos)
+  }
+
+  const checkTodo = (todoId) => {
+    const newTodos = todos.map((todo) => {
+      if (todo.id === todoId) {
+        return {
+          title: todo.title,
+          checked: !todo.checked,
+          id: todo.id
+        }
+      }
+      return todo
+    })
     setTodos(newTodos)
   }
 
@@ -27,9 +42,13 @@ const TodoList = () => {
 
     {
       todos.map( (todo, i) => {
-        return <div key={todo + i} className="list-todo">
-          <h3>{ todo }</h3>
-          <span className="remove-todo" onClick={() => removeTodo(todo)}>x</span>
+        return <div key={todo.id} className="list-todo">
+          <h3>{ todo.title }</h3>
+          { todo.checked }
+          <span className="checked-todo" onClick={() => checkTodo(todo.id)}>
+            <img src={todo.checked ? checked : check} alt="check" />
+          </span>
+          <span className="remove-todo" onClick={() => removeTodo(todo.id)}>x</span>
         </div>
       })
     }
